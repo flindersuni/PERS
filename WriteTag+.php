@@ -1,5 +1,6 @@
 <?php
-error_reporting(0); 
+
+//error_reporting(0); //Jume 4, 2024
 require('fpdf.php');
 
 
@@ -170,14 +171,26 @@ class PDF_WriteTag extends FPDF
 		else
 		{
 			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			
+		///////////	4 June 2024 code below
+			/* while(list($k,$val)=each($this->PileStyle))
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['family']!="") {
 					$family=$this->TagStyle[$val]['family'];
 					break;
 				}
-			}
+			}*/
+			
+	foreach ($this->PileStyle as $k => $val) {
+    $val = trim($val);
+    if ($this->TagStyle[$val]['family'] != "") {
+    $family = $this->TagStyle[$val]['family'];
+    break;
+    }
+}
+		///////////
+			
 		}
 
 		// Style
@@ -189,7 +202,8 @@ class PDF_WriteTag extends FPDF
 			$italic=false;
 			$underline=false;
 			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			///////////// upadted with below 4-June, 2024
+			/* while(list($k,$val)=each($this->PileStyle))
 			{
 				$val=trim($val);
 				$style1=strtoupper($this->TagStyle[$val]['style']);
@@ -204,7 +218,26 @@ class PDF_WriteTag extends FPDF
 					if(strpos($style1,"U")!==false)
 						$underline=true;
 				} 
-			}
+			} */
+			//////////
+			foreach ($this->PileStyle as $k => $val) {
+    $val = trim($val);
+    $style1 = strtoupper($this->TagStyle[$val]['style']);
+    if ($style1 == "N") {
+        break;
+    } else {
+        if (strpos($style1, "B") !== false) {
+            $bold = true;
+        }
+        if (strpos($style1, "I") !== false) {
+            $italic = true;
+        }
+        if (strpos($style1, "U") !== false) {
+            $underline = true;
+        }
+    }
+}
+			
 			if($bold)
 				$style.="B";
 			if($italic)
@@ -219,14 +252,24 @@ class PDF_WriteTag extends FPDF
 		else
 		{
 			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			////////////  June 4, 2024 as below
+			 /*while(list($k,$val)=each($this->PileStyle))
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['size']!=0) {
 					$size=$this->TagStyle[$val]['size'];
 					break;
 				}
-			}
+			} 
+			///////////
+			*/
+		foreach ($this->PileStyle as $k => $val) {
+    $val = trim($val);
+    if ($this->TagStyle[$val]['size'] != 0) {
+        $size = $this->TagStyle[$val]['size'];
+        break;
+    }
+}	
 		}
 
 		// Color
@@ -235,14 +278,25 @@ class PDF_WriteTag extends FPDF
 		else
 		{
 			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			
+			/////////////// June 4, 2024
+			/* while(list($k,$val)=each($this->PileStyle))
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['color']!="") {
 					$color=$this->TagStyle[$val]['color'];
 					break;
 				}
-			}
+			} */
+		  ////////////////
+			
+			foreach ($this->PileStyle as $k => $val) {
+    $val = trim($val);
+    if ($this->TagStyle[$val]['color'] !== "") {
+        $color = $this->TagStyle[$val]['color'];
+        break;
+    }
+}
 		}
 		 
 		// Result
@@ -620,7 +674,3 @@ function NbLines($w,$txt)
 
 } // End of class
 
-
-
-
-?>

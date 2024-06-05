@@ -56,14 +56,30 @@ $search = $_POST[search];
 $orderby="report_id DESC";
 
 }*/
-/*if (!$_GET['offset']){
-$offset=0;
+if(isset($_GET['offset'])){
+
+$offset = $_GET['offset'];
+
 }else{
-$offset=$_GET['offset'];	
-}*/
+
+$offset = 0;
+
+}
 $orderby="report_id DESC"; //new May 2024
-$offset=0;		 
-switch ($_GET['when']) {
+//$offset=0;
+	 
+if(isset($_GET['when'])){
+
+$when = $_GET['when'];
+
+}else{
+
+$when = 0;
+
+}	 
+	 
+	 
+switch ($when) {
 case 'a';
 //echo "<a href=admin_browse_reports.php>current year</a> | <a href=admin_browse_reports.php?when=c>current question set(s)</a> | all reports | <a href=admin_browse_reports.php?when=b>all reports 25 per page</a><p>"  ;
 $active_status1=NULL;
@@ -80,6 +96,9 @@ $stmt->execute();
 //$sql="SELECT * FROM pers_reports  ORDER BY ".$orderby; //new May 2024		
 break;
 
+		
+		
+		
 case 'b';
 //echo "<a href=admin_browse_reports.php>current year</a> | <a href=admin_browse_reports.php?when=c>current question set<s)</a> | <a href=admin_browse_reports.php?when=a>all reports</a> | all reports 25 per page<p>"  ;
 $active_status1=NULL;
@@ -87,9 +106,14 @@ $active_status2=NULL;
 $active_status3=NULL;
 $active_status4='active';
 $extra=NULL;
-$sql="SELECT * FROM pers_reports  ORDER BY ".$orderby." LIMIT 30 OFFSET ".$offset;
+		
+//$sql="SELECT * FROM pers_reports  ORDER BY ".$orderby." LIMIT 30 OFFSET ".$offset;
+$stmt = $conn->prepare('SELECT * FROM pers_reports  ORDER BY report_id DESC LIMIT 30 OFFSET '.$offset);	
+$stmt->execute();		
 break;
 
+		
+		
 case 'c';
 //echo "<a href=admin_browse_reports.php>current year</a> | current question set(s)  | <a href=admin_browse_reports.php?when=a>all reports</a> | <a href=admin_browse_reports.php?when=b>all reports 25 per page</a><p>" ;
 $active_status1=NULL;
@@ -97,7 +121,9 @@ $active_status2='active';
 $active_status3=NULL;
 $active_status4=NULL;
 $extra=NULL;
-$sql="SELECT * FROM pers_reports  WHERE  question_set >='35' ORDER BY ".$orderby;
+//$sql="SELECT * FROM pers_reports  WHERE  question_set >='35' ORDER BY ".$orderby;
+$stmt = $conn->prepare('SELECT * FROM pers_reports WHERE  question_set >=35 ORDER BY report_id DESC');	
+$stmt->execute();		
 break;
 
 $active_status1='active';
@@ -114,7 +140,10 @@ $active_status3=NULL;
 $active_status4=NULL;
 //$extra="<a href=admin_browse_reports_excel.php>dump to Excel</a><p>";
 $extra="<a class='btn btn-default btn-xs href='admin_browse_reports_excel.php' role='button'>dump to Excel</a>";
-$sql="SELECT * FROM pers_reports  WHERE report_year='".date("Y")."' ORDER BY ".$orderby;	
+//$sql="SELECT * FROM pers_reports  WHERE report_year='".date("Y")."' ORDER BY ".$orderby;
+$stmt = $conn->prepare('SELECT * FROM pers_reports WHERE  report_year='.date("Y").' ORDER BY report_id DESC');	
+$stmt->execute();		
+break;	 
 //echo "<a href=admin_browse_reports_excel.php>dump to Excel</a><p>"; 
                   }else{
 //if before April, drop down list of questions shows last year and this year
@@ -123,7 +152,9 @@ $active_status1='active';
 $active_status2=NULL;
 $active_status3=NULL;
 $active_status4=NULL;
-$sql="SELECT * FROM pers_reports  WHERE  (report_year='".date("Y")."' OR report_year='".(date('Y')-1)."') ORDER BY ".$orderby;
+//$sql="SELECT * FROM pers_reports  WHERE  (report_year='".date("Y")."' OR report_year='".(date('Y')-1)."') ORDER BY ".$orderby;
+$stmt = $conn->prepare('SELECT * FROM pers_reports WHERE  report_year='.date("Y").' OR report_year='.(date('Y')-3).' ORDER BY report_id DESC');	
+$stmt->execute();		 
 //changed to show last years too 23-3-15
 				  }
 
@@ -145,7 +176,14 @@ echo "</div>";
 //$result = $conn->query($sql);  //new sql 
 	 
 //echo $sql;
-/*if ($_GET['when']==b) {
+	 
+
+	 
+	 
+	 
+	 
+	 
+if ($when=='b') {
 $next=$offset+30;
 $previous=$offset-30;
 //echo "<a href=https://ehlt.flinders.edu.au/login/pers/admin_browse_reports.php?when=b&offset=$previous>< prev</a> | ";
@@ -160,7 +198,7 @@ echo "</ul>";
 
 //echo "<a class='btn btn-primary btn-xs  href='#' role='button'>".$nrows." reports</a><p>";
 }
-*/
+
 echo "<br>";	
 
 echo "<table class = 'table table-hover'>";
